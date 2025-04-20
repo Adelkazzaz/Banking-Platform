@@ -5,13 +5,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatDate(dateString: string): string {
-  const date = new Date(dateString)
+export function formatDate(date: Date | string): string {
+  const dateObj = date instanceof Date ? date : new Date(date)
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
-  }).format(date)
+  }).format(dateObj)
 }
 
 export function formatCurrency(amount: number): string {

@@ -182,4 +182,99 @@ export const api = {
       return { success: false, message: "Get admin stats failed" };
     }
   },
+  getTransactionChartData: async (days: number = 14): Promise<ApiResponse<any>> => {
+    "use server";
+    try {
+      const token = (await cookies()).get("token")?.value;
+      const response = await fetch(`${BASE_URL}/admin/transactions/chart?days=${days}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+           Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Get transaction chart data failed:", error);
+      return { success: false, message: "Get transaction chart data failed" };
+    }
+  },
+  getUsers: async (): Promise<ApiResponse<User[]>> => {
+    "use server";
+    try {
+      const token = (await cookies()).get("token")?.value;
+      const response = await fetch(`${BASE_URL}/admin/users`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+           Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Get users failed:", error);
+      return { success: false, message: "Get users failed" };
+    }
+  },
+  getAdminTransactions: async (): Promise<ApiResponse<Transaction[]>> => {
+    "use server";
+    try {
+      const token = (await cookies()).get("token")?.value;
+      const response = await fetch(`${BASE_URL}/admin/transactions`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+           Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Get admin transactions failed:", error);
+      return { success: false, message: "Get admin transactions failed" };
+    }
+  },
+  approveLoan: async (loanId: string): Promise<ApiResponse<any>> => {
+    "use server";
+    try {
+      const token = (await cookies()).get("token")?.value;
+      const response = await fetch(`${BASE_URL}/admin/loans/${loanId}/approve`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Approve loan failed:", error);
+      return { success: false, message: "Approve loan failed" };
+    }
+  },
+  rejectLoan: async (loanId: string): Promise<ApiResponse<any>> => {
+    "use server";
+    try {
+      const token = (await cookies()).get("token")?.value;
+      const response = await fetch(`${BASE_URL}/admin/loans/${loanId}/reject`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Reject loan failed:", error);
+      return { success: false, message: "Reject loan failed" };
+    }
+  },
 }

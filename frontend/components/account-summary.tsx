@@ -13,7 +13,7 @@ export function AccountSummary({ user }: AccountSummaryProps) {
           <CardTitle className="text-sm font-medium">Account Balance</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">${user.balance?.toFixed(2) || "0.00"}</div>
+          <div className="text-2xl font-bold">${user.balance.toFixed(2)}</div>
           <p className="text-xs text-muted-foreground">Available funds</p>
         </CardContent>
       </Card>

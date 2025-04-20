@@ -7,7 +7,7 @@ from app.models.loan import LoanResponse, LoansResponse
 from app.services.user_service import UserService
 from app.services.transaction_service import TransactionService
 from app.services.loan_service import LoanService
-from app.api.dependencies import get_user_service, get_transaction_service, get_loan_service, get_current_admin
+from app.api.dependencies import get_user_service, get_transaction_service, get_loan_service, get_current_admin, get_admin_service
 
 router = APIRouter()
 
@@ -58,6 +58,22 @@ async def get_all_transactions(
         limit=limit,
         offset=offset
     )
+
+@router.get("/transactions/chart")
+async def get_transaction_chart_data(
+    days: int = 14,
+    current_user: UserInDB = Depends(get_current_admin),
+    admin_service = Depends(get_admin_service)
+):
+    """
+    Get transaction data grouped by day for charts
+    """
+    chart_data = await admin_service.get_transaction_chart_data(days)
+    
+    return {
+        "success": True,
+        "data": chart_data
+    }
 
 @router.get("/loans", response_model=LoansResponse)
 async def get_all_loans(

@@ -25,6 +25,8 @@ export type Loan = {
   accountNumber: string
   amount: number
   term: number
+  interestRate: number
+  requestDate: Date
   status: "pending" | "approved" | "rejected"
   createdAt: Date
 }

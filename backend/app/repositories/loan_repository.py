@@ -61,3 +61,26 @@ class LoanRepository:
 
     async def get_total_loans(self) -> int:
         return await self.collection.count_documents({})
+        
+    async def get_loans_by_status(self, status: str) -> List[Loan]:
+        """Get all loans with a specific status"""
+        try:
+            loans = await self.collection.find({"status": status}).to_list(length=100)
+            return [Loan(**loan) for loan in loans]
+        except Exception as e:
+            print(f"Database error in get_loans_by_status: {e}")
+            return []
+            
+    async def get_total_loan_amount(self) -> float:
+        """Get the total amount of all loans"""
+        try:
+            pipeline = [
+                {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+            ]
+            result = await self.collection.aggregate(pipeline).to_list(length=1)
+            if result and len(result) > 0:
+                return result[0].get("total", 0)
+            return 0
+        except Exception as e:
+            print(f"Database error in get_total_loan_amount: {e}")
+            return 0

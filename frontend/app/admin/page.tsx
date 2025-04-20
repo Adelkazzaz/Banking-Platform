@@ -27,6 +27,7 @@ export default function AdminDashboardPage() {
     pendingLoans: 0,
     approvedLoans: 0,
     totalLoanAmount: 0,
+    chartData: [],
   })
 
   const [isLoading, setIsLoading] = useState(true)
@@ -103,10 +104,10 @@ export default function AdminDashboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Transaction Activity</CardTitle>
-                <CardDescription>Transaction volume over the past 30 days</CardDescription>
+                <CardDescription>Transaction volume over the past 14 days</CardDescription>
               </CardHeader>
               <CardContent>
-                <AdminDashboardChart />
+                <AdminDashboardChart chartData={stats.chartData} isLoading={isLoading} />
               </CardContent>
             </Card>
 

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 import { getSession } from "@/lib/auth"
-import { getUserById, getUserLoans } from "@/lib/db"
+import { api } from "@/lib/api-client"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { LoanList } from "@/components/loan-list"
 import { NewLoanApplication } from "@/components/new-loan-application"
@@ -12,13 +12,17 @@ export default async function LoansPage() {
     redirect("/login")
   }
 
-  const user = await getUserById(session.id)
+  // Get user profile and loans from our backend API
+  const userResponse = await api.getUserProfile()
+  const user = userResponse.success && userResponse.data ? userResponse.data : null
 
   if (!user) {
     redirect("/login")
   }
 
-  const loans = await getUserLoans(user.id)
+  // Get user loans from our backend API
+  const loansResponse = await api.getLoans()
+  const loans = loansResponse.success && loansResponse.data ? loansResponse.data : []
 
   return (
     <div className="space-y-6">

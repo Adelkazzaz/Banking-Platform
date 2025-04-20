@@ -1,7 +1,7 @@
 "use server"
 
 import { getSession } from "@/lib/auth"
-import { getUserById, createLoan } from "@/lib/db"
+import { api } from "@/lib/api-client"
 
 interface LoanFormData {
   amount: number
@@ -19,7 +19,9 @@ export async function applyForLoanAction(formData: LoanFormData) {
       }
     }
 
-    const user = await getUserById(session.id)
+    // Get user profile using our API client
+    const userResponse = await api.getUserProfile()
+    const user = userResponse.success && userResponse.data ? userResponse.data : null
 
     if (!user) {
       return {
@@ -28,17 +30,18 @@ export async function applyForLoanAction(formData: LoanFormData) {
       }
     }
 
-    // Calculate interest rate based on term
-    // This is a simple example - in a real app, this would be more complex
-    const interestRate = 5 + formData.term / 12 // Base rate + term adjustment
-
-    // Create loan application
-    await createLoan({
-      userId: user.id,
+    // Create loan using our API client
+    const loanResponse = await api.createLoan({
       amount: formData.amount,
       term: formData.term,
-      interestRate,
     })
+
+    if (!loanResponse.success) {
+      return {
+        success: false,
+        message: loanResponse.message || "Failed to create loan",
+      }
+    }
 
     return {
       success: true,

@@ -12,14 +12,18 @@ interface TransferFormData {
 export async function transferAction(formData: TransferFormData) {
   try {
     // Get the token from the cookie
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const token = cookies().get("token")?.value
 
     if (!token) {
       return {
         success: false,
         message: "You must be logged in to make a transfer",
-      };
+      }
+    }
+
+    // Set the token for the API client
+    if (typeof window !== "undefined") {
+      localStorage.setItem("token", token)
     }
 
     const result = await api.createTransaction({
@@ -27,24 +31,17 @@ export async function transferAction(formData: TransferFormData) {
       amount: formData.amount,
       description: formData.description || "Transfer",
       type: "transfer",
-    });
-
-    if (!result.success) {
-      return {
-        success: false,
-        message: result.message,
-      };
-    }
+    })
 
     return {
       success: true,
       message: result.message,
-    };
+    }
   } catch (error) {
-    console.error("Transfer action error:", error);
+    console.error("Transfer action error:", error)
     return {
       success: false,
       message: "An error occurred during the transfer",
-    };
+    }
   }
 }

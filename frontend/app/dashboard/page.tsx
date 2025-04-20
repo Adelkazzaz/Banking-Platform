@@ -14,38 +14,21 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Fetch user profile from the backend API
-  const userProfileResult = await api.getUserProfile();
+  // Get user profile using our API client
+  const userResponse = await api.getUserProfile();
+  const user = userResponse.success && userResponse.data ? userResponse.data : null;
 
-  if (!userProfileResult.success || !userProfileResult.data) {
-    console.error("Failed to fetch user profile:", userProfileResult.message);
-    // Handle error appropriately, e.g., display an error message to the user
-    return <div>Error: Failed to load user profile</div>;
+  if (!user) {
+    redirect("/login");
   }
 
-  const user = userProfileResult.data;
-
-  // Fetch transactions from the backend API
-  const transactionsResult = await api.getTransactions();
-
-  if (!transactionsResult.success || !transactionsResult.data) {
-    console.error("Failed to fetch transactions:", transactionsResult.message);
-    // Handle error appropriately, e.g., display an error message to the user
-    return <div>Error: Failed to load transactions</div>;
-  }
-
-  const transactions = transactionsResult.data;
-
-  // Fetch loans from the backend API
-  const loansResult = await api.getLoans();
-
-  if (!loansResult.success || !loansResult.data) {
-    console.error("Failed to fetch loans:", loansResult.message);
-    // Handle error appropriately, e.g., display an error message to the user
-    return <div>Error: Failed to load loans</div>;
-  }
-
-  const loans = loansResult.data;
+  // Get user transactions from our backend API
+  const transactionsResponse = await api.getTransactions();
+  const transactions = transactionsResponse.success && transactionsResponse.data ? transactionsResponse.data : [];
+  
+  // Get user loans from our backend API
+  const loansResponse = await api.getLoans();
+  const loans = loansResponse.success && loansResponse.data ? loansResponse.data : [];
 
   return (
     <div className="space-y-6">
@@ -63,5 +46,5 @@ export default async function DashboardPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

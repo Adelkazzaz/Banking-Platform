@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ArrowLeftRight } from "lucide-react"
+import { ArrowLeftRight, TrendingUp } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
 
 interface TransactionStatsProps {
@@ -17,10 +17,28 @@ export function TransactionStats({ totalTransactions, transactionVolume, isLoadi
         <ArrowLeftRight className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        {isLoading ? <Skeleton className="h-7 w-20" /> : <div className="text-2xl font-bold">{totalTransactions}</div>}
-        <p className="text-xs text-muted-foreground">
-          {isLoading ? <Skeleton className="h-4 w-28 mt-1" /> : `${formatCurrency(transactionVolume)} total volume`}
-        </p>
+        {isLoading ? (
+          <Skeleton className="h-7 w-20" />
+        ) : (
+          <div className="text-2xl font-bold">{totalTransactions.toLocaleString()}</div>
+        )}
+
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-xs text-muted-foreground">Total Volume</div>
+          <div className="flex items-center gap-2">
+            {isLoading ? (
+              <Skeleton className="h-4 w-28" />
+            ) : (
+              <>
+                <span className="font-medium text-sm">{formatCurrency(transactionVolume)}</span>
+                <div className="flex items-center gap-1 text-xs text-green-500">
+                  <TrendingUp className="h-3 w-3" />
+                  <span>+12%</span>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </CardContent>
     </Card>
   )

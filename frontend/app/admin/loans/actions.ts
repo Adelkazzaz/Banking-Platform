@@ -1,7 +1,7 @@
 "use server"
 
 import { getSession } from "@/lib/auth"
-import { updateLoanStatus } from "@/lib/db"
+import { api } from "@/lib/api-client"
 
 export async function approveLoanAction(loanId: string) {
   try {
@@ -14,12 +14,13 @@ export async function approveLoanAction(loanId: string) {
       }
     }
 
-    const result = await updateLoanStatus(loanId, "approved")
+    // Use our API client to approve the loan
+    const result = await api.approveLoan(loanId)
 
-    if (!result) {
+    if (!result.success) {
       return {
         success: false,
-        message: "Failed to approve loan",
+        message: result.message || "Failed to approve loan",
       }
     }
 
@@ -47,12 +48,13 @@ export async function rejectLoanAction(loanId: string) {
       }
     }
 
-    const result = await updateLoanStatus(loanId, "rejected")
+    // Use our API client to reject the loan
+    const result = await api.rejectLoan(loanId)
 
-    if (!result) {
+    if (!result.success) {
       return {
         success: false,
-        message: "Failed to reject loan",
+        message: result.message || "Failed to reject loan",
       }
     }
 

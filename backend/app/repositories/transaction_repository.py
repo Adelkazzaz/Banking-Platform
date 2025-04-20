@@ -54,3 +54,33 @@ class TransactionRepository:
 
     async def get_total_transactions(self) -> int:
         return await self.collection.count_documents({})
+        
+    async def get_total_volume(self) -> float:
+        """Get the total volume of all transactions"""
+        try:
+            pipeline = [
+                {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+            ]
+            result = await self.collection.aggregate(pipeline).to_list(length=1)
+            if result and len(result) > 0:
+                return result[0].get("total", 0)
+            return 0
+        except Exception as e:
+            print(f"Database error in get_total_volume: {e}")
+            return 0
+            
+    async def get_transactions_in_date_range(self, start_date, end_date) -> List[Transaction]:
+        """Get all transactions between start_date and end_date"""
+        query = {
+            "createdAt": {
+                "$gte": start_date,
+                "$lte": end_date
+            }
+        }
+        
+        try:
+            transactions = await self.collection.find(query).sort("createdAt", 1).to_list(length=1000)
+            return [Transaction(**tx) for tx in transactions]
+        except Exception as e:
+            print(f"Database error in get_transactions_in_date_range: {e}")
+            return []
