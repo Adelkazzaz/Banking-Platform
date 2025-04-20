@@ -1,0 +1,8 @@
+# API URL
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
+
+# JWT Secret (for server-side auth)
+JWT_SECRET=your_super_secret_key_change_in_production
+
+# Port
+PORT=3000
