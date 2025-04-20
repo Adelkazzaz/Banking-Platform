@@ -25,7 +25,7 @@ async def create_transaction(
         transaction=transaction
     )
 
-@router.get("", response_model=TransactionsResponse)
+@router.get("", response_model=dict)
 async def get_transactions(
     limit: int = 10,
     offset: int = 0,
@@ -39,9 +39,8 @@ async def get_transactions(
         offset
     )
     
-    return TransactionsResponse(
-        transactions=transactions,
-        total=total,
-        limit=limit,
-        offset=offset
-    )
+    # Return in the format expected by the frontend
+    return {
+        "success": True,
+        "data": transactions
+    }

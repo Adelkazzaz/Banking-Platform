@@ -6,11 +6,11 @@ from app.api.dependencies import get_user_service, get_current_user
 
 router = APIRouter()
 
-@router.get("/profile", response_model=User)
+@router.get("/profile", response_model=dict)
 async def get_user_profile(
     current_user: UserInDB = Depends(get_current_user)
 ):
-    return User(
+    user = User(
         id=current_user.id,
         email=current_user.email,
         firstName=current_user.firstName,
@@ -20,6 +20,11 @@ async def get_user_profile(
         createdAt=current_user.createdAt,
         role=current_user.role
     )
+    
+    return {
+        "success": True,
+        "data": user
+    }
 
 @router.put("/profile", response_model=dict)
 async def update_user_profile(

@@ -84,7 +84,7 @@ export const api = {
   }): Promise<ApiResponse<Transaction>> => {
     "use server"
     try {
-      const token = localStorage.getItem("token")
+      const token = (await cookies()).get("token")?.value;
 
       const response = await fetch(`${BASE_URL}/transactions`, {
         method: "POST",
@@ -105,7 +105,7 @@ export const api = {
   getTransactions: async (): Promise<ApiResponse<Transaction[]>> => {
     "use server"
     try {
-      const token = localStorage.getItem("token")
+      const token = (await cookies()).get("token")?.value;
 
       const response = await fetch(`${BASE_URL}/transactions`, {
         method: "GET",
@@ -125,7 +125,7 @@ export const api = {
   createLoan: async (loanData: { amount: number; term: number }): Promise<ApiResponse<Loan>> => {
     "use server"
     try {
-      const token = localStorage.getItem("token")
+      const token = (await cookies()).get("token")?.value;
 
       const response = await fetch(`${BASE_URL}/loans`, {
         method: "POST",
@@ -146,7 +146,7 @@ export const api = {
   getLoans: async (): Promise<ApiResponse<Loan[]>> => {
     "use server"
     try {
-      const token = localStorage.getItem("token")
+      const token = (await cookies()).get("token")?.value;
 
       const response = await fetch(`${BASE_URL}/loans`, {
         method: "GET",

@@ -21,13 +21,15 @@ async def apply_for_loan(
         loan=loan
     )
 
-@router.get("", response_model=LoansResponse)
+@router.get("", response_model=dict)
 async def get_loans(
     current_user: UserInDB = Depends(get_current_user),
     loan_service: LoanService = Depends(get_loan_service)
 ):
     loans = await loan_service.get_user_loans(current_user.id)
     
-    return LoansResponse(
-        loans=loans
-    )
+    # Return in the format expected by the frontend
+    return {
+        "success": True,
+        "data": loans
+    }
