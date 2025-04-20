@@ -5,30 +5,28 @@ import { DashboardHeader } from "@/components/dashboard-header";
 import { AdminLoanList } from "@/components/admin-loan-list";
 
 export default async function AdminLoansPage() {
-  const session = await getSession();
+  const session = await getSession()
 
   if (!session) {
-    redirect("/login");
+    redirect("/login")
   }
 
   if (session.role !== "admin") {
-    redirect("/dashboard");
+    redirect("/dashboard")
   }
 
-  const loansResult = await api.getLoans();
+  // Get all loans
+  const loanIds = await kv.smembers("loans")
+  const loans = await Promise.all(loanIds.map((id) => kv.get(`loan:${id}`)))
 
-  if (!loansResult.success || !loansResult.data) {
-    console.error("Failed to fetch loans:", loansResult.message);
-    return <div>Error: Failed to load loans</div>;
-  }
-
-  const loans = loansResult.data;
+  // Filter out any null values
+  const validLoans = loans.filter(Boolean)
 
   return (
     <div className="space-y-6">
       <DashboardHeader title="Loan Management" description="Review and manage loan applications." />
 
-      <AdminLoanList loans={loans} />
+      <AdminLoanList loans={validLoans} />
     </div>
-  );
+  )
 }

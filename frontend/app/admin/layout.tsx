@@ -34,7 +34,7 @@ export default async function AdminLayout({
         </div>
       </header>
       <div className="flex flex-1">
-        <aside className="hidden w-64 border-r bg-muted/40 md:block">
+        <aside className="hidden border-r bg-muted/40 lg:block lg:w-64">
           <AdminNav />
         </aside>
         <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>

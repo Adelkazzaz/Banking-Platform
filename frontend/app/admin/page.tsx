@@ -8,7 +8,15 @@ import { UserStats } from "@/components/user-stats"
 import { TransactionStats } from "@/components/transaction-stats"
 import { LoanStats } from "@/components/loan-stats"
 import { AdminDashboardChart } from "@/components/admin-dashboard-chart"
+import { TransactionDistributionChart } from "@/components/transaction-distribution-chart"
+import { UserGrowthChart } from "@/components/user-growth-chart"
+import { LoanStatusChart } from "@/components/loan-status-chart"
+import { RecentActivityList } from "@/components/recent-activity-list"
 import { getAdminDashboardStats } from "./actions"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button"
+import { Menu } from "lucide-react"
+import { AdminNav } from "@/components/admin-nav"
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState({
@@ -40,17 +48,43 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <AdminHeader title="Admin Dashboard" description="Overview of all banking activities." />
+      <div className="flex items-center justify-between">
+        <AdminHeader title="Admin Dashboard" description="Overview of all banking activities." />
 
-      <Tabs defaultValue="overview">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="users">Users</TabsTrigger>
-          <TabsTrigger value="transactions">Transactions</TabsTrigger>
-          <TabsTrigger value="loans">Loans</TabsTrigger>
+        {/* Mobile sidebar trigger */}
+        <Sheet>
+          <SheetTrigger asChild className="lg:hidden">
+            <Button variant="outline" size="icon">
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-[240px] sm:w-[300px] lg:hidden">
+            <div className="py-4">
+              <AdminNav />
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-4 h-auto">
+          <TabsTrigger value="overview" className="py-2">
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="users" className="py-2">
+            Users
+          </TabsTrigger>
+          <TabsTrigger value="transactions" className="py-2">
+            Transactions
+          </TabsTrigger>
+          <TabsTrigger value="loans" className="py-2">
+            Loans
+          </TabsTrigger>
         </TabsList>
+
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <UserStats totalUsers={stats.totalUsers} activeUsers={stats.activeUsers} isLoading={isLoading} />
             <TransactionStats
               totalTransactions={stats.totalTransactions}
@@ -64,16 +98,62 @@ export default function AdminDashboardPage() {
               isLoading={isLoading}
             />
           </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Transaction Activity</CardTitle>
+                <CardDescription>Transaction volume over the past 30 days</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AdminDashboardChart />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Transaction Distribution</CardTitle>
+                <CardDescription>Breakdown by transaction type</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <TransactionDistributionChart />
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Growth</CardTitle>
+                <CardDescription>New user registrations over time</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <UserGrowthChart />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Loan Status Distribution</CardTitle>
+                <CardDescription>Current status of all loans</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <LoanStatusChart />
+              </CardContent>
+            </Card>
+          </div>
+
           <Card>
             <CardHeader>
-              <CardTitle>Transaction Activity</CardTitle>
-              <CardDescription>Transaction volume over the past 30 days</CardDescription>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>Latest transactions and system events</CardDescription>
             </CardHeader>
             <CardContent>
-              <AdminDashboardChart />
+              <RecentActivityList />
             </CardContent>
           </Card>
         </TabsContent>
+
         <TabsContent value="users">
           <Card>
             <CardHeader>
@@ -85,6 +165,7 @@ export default function AdminDashboardPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
         <TabsContent value="transactions">
           <Card>
             <CardHeader>
@@ -96,6 +177,7 @@ export default function AdminDashboardPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
         <TabsContent value="loans">
           <Card>
             <CardHeader>
