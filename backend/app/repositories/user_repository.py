@@ -5,6 +5,7 @@ from app.models.user import UserInDB, UserProfileUpdate
 from app.core.security import get_password_hash
 from app.core.database import get_database
 import uuid
+from datetime import datetime
 
 class UserRepository:
     def __init__(self, db: AsyncIOMotorDatabase = Depends(get_database)):
@@ -125,3 +126,24 @@ class UserRepository:
         except Exception as e:
             print(f"Database error: {e}")
             return 0
+            
+    async def get_users_registered_in_range(self, start_date: datetime, end_date: datetime) -> List[UserInDB]:
+        """
+        Get users who registered between start_date and end_date
+        """
+        try:
+            query = {
+                "createdAt": {
+                    "$gte": start_date,
+                    "$lte": end_date
+                }
+            }
+            
+            users = []
+            cursor = self.collection.find(query).sort("createdAt", 1)
+            async for user in cursor:
+                users.append(UserInDB(**user))
+            return users
+        except Exception as e:
+            print(f"Database error in get_users_registered_in_range: {e}")
+            return []

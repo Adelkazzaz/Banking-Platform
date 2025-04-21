@@ -84,3 +84,12 @@ class TransactionRepository:
         except Exception as e:
             print(f"Database error in get_transactions_in_date_range: {e}")
             return []
+
+    async def get_recent_transactions(self, limit: int = 10) -> List[Transaction]:
+        """Get the most recent transactions"""
+        try:
+            transactions = await self.collection.find().sort("createdAt", -1).limit(limit).to_list(length=limit)
+            return [Transaction(**tx) for tx in transactions]
+        except Exception as e:
+            print(f"Database error in get_recent_transactions: {e}")
+            return []

@@ -84,3 +84,14 @@ class LoanRepository:
         except Exception as e:
             print(f"Database error in get_total_loan_amount: {e}")
             return 0
+            
+    async def get_recent_loans(self, limit: int = 10) -> List[Loan]:
+        """
+        Get most recently created loans
+        """
+        try:
+            loans = await self.collection.find().sort("requestDate", -1).limit(limit).to_list(length=limit)
+            return [Loan(**loan) for loan in loans]
+        except Exception as e:
+            print(f"Database error in get_recent_loans: {e}")
+            return []

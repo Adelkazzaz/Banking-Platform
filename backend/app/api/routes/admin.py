@@ -75,7 +75,69 @@ async def get_transaction_chart_data(
         "data": chart_data
     }
 
-@router.get("/loans", response_model=LoansResponse)
+@router.get("/transactions/distribution")
+async def get_transaction_type_distribution(
+    current_user: UserInDB = Depends(get_current_admin),
+    admin_service = Depends(get_admin_service)
+):
+    """
+    Get distribution of transactions by type (deposit, withdrawal, transfer)
+    """
+    distribution_data = await admin_service.get_transaction_distribution()
+    
+    return {
+        "success": True,
+        "data": distribution_data
+    }
+
+@router.get("/users/growth")
+async def get_user_growth(
+    months: int = 12,
+    current_user: UserInDB = Depends(get_current_admin),
+    admin_service = Depends(get_admin_service)
+):
+    """
+    Get user registration growth data over time
+    """
+    growth_data = await admin_service.get_user_growth_data(months)
+    
+    return {
+        "success": True,
+        "data": growth_data
+    }
+
+@router.get("/loans/distribution")
+async def get_loan_status_distribution(
+    current_user: UserInDB = Depends(get_current_admin),
+    admin_service = Depends(get_admin_service)
+):
+    """
+    Get distribution of loans by status (pending, approved, rejected, completed)
+    """
+    distribution_data = await admin_service.get_loan_status_distribution()
+    
+    return {
+        "success": True,
+        "data": distribution_data
+    }
+
+@router.get("/activity")
+async def get_recent_activity(
+    limit: int = 10,
+    current_user: UserInDB = Depends(get_current_admin),
+    admin_service = Depends(get_admin_service)
+):
+    """
+    Get recent system activity (transactions, loans, etc.)
+    """
+    activity_data = await admin_service.get_recent_system_activity(limit)
+    
+    return {
+        "success": True,
+        "data": activity_data
+    }
+
+@router.get("/loans", response_model=dict)
 async def get_all_loans(
     limit: int = 10,
     offset: int = 0,
@@ -85,9 +147,13 @@ async def get_all_loans(
 ):
     loans, total = await loan_service.get_all_loans(limit, offset, status)
     
-    return LoansResponse(
-        loans=loans
-    )
+    return {
+        "success": True,
+        "data": loans,
+        "total": total,
+        "limit": limit,
+        "offset": offset
+    }
 
 @router.put("/loans/{loan_id}/approve", response_model=LoanResponse)
 async def approve_loan(

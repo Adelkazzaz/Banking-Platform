@@ -18,7 +18,18 @@ export default async function AdminLoansPage() {
   // Get all loans from our backend API using the admin endpoint
   const response = await api.getAdminLoans();
   
-  const loans = response.success && response.data ? response.data : [];
+  // Handle different possible response formats
+  let loans = [];
+  if (response.success) {
+    // Check if data is directly an array or if it's in the 'loans' property
+    if (Array.isArray(response.data)) {
+      loans = response.data;
+    } else if (response.data && Array.isArray(response.data.loans)) {
+      loans = response.data.loans;
+    } else if (Array.isArray(response.loans)) {
+      loans = response.loans;
+    }
+  }
 
   return (
     <div className="space-y-6">
