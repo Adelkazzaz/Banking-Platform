@@ -13,6 +13,7 @@ async def connect_to_mongo(app: FastAPI) -> AsyncGenerator:
     try:
         client = AsyncIOMotorClient(settings.MONGODB_URI)
         app.state.database = client[settings.DATABASE_NAME]
+        await client.admin.command('ping')
         logger.info("Connected to MongoDB")
     except Exception as e:
         logger.error(f"Failed to connect to MongoDB: {e}")
