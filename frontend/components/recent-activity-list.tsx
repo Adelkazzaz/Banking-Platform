@@ -1,56 +1,41 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/utils"
-
-// Sample data - in a real app, this would come from the API
-const activities = [
-  {
-    id: "1",
-    type: "transaction",
-    user: { name: "John Doe", initials: "JD" },
-    description: "Transferred $500 to Sarah Johnson",
-    timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // 5 minutes ago
-    status: "completed",
-  },
-  {
-    id: "2",
-    type: "loan",
-    user: { name: "Michael Smith", initials: "MS" },
-    description: "Applied for a loan of $10,000",
-    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
-    status: "pending",
-  },
-  {
-    id: "3",
-    type: "user",
-    user: { name: "Emily Wilson", initials: "EW" },
-    description: "Created a new account",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(), // 1 hour ago
-    status: "completed",
-  },
-  {
-    id: "4",
-    type: "transaction",
-    user: { name: "Robert Brown", initials: "RB" },
-    description: "Withdrew $200 from savings account",
-    timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(), // 1.5 hours ago
-    status: "completed",
-  },
-  {
-    id: "5",
-    type: "loan",
-    user: { name: "Jessica Lee", initials: "JL" },
-    description: "Loan application of $5,000 was approved",
-    timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(), // 2 hours ago
-    status: "approved",
-  },
-]
+import { getRecentActivity } from "@/app/admin/actions"
 
 export function RecentActivityList() {
+  const [activities, setActivities] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [displayCount, setDisplayCount] = useState(5)
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        // Get the 10 most recent activities
+        const recentActivities = await getRecentActivity(10)
+        setActivities(recentActivities)
+      } catch (error) {
+        console.error("Failed to load recent activity data:", error)
+        // Fallback to empty state
+        setActivities([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    loadData()
+  }, [])
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center py-8">Loading recent activities...</div>
+  }
+
+  if (activities.length === 0) {
+    return <div className="flex items-center justify-center py-8">No recent activities available</div>
+  }
 
   return (
     <div className="space-y-4">
@@ -58,26 +43,30 @@ export function RecentActivityList() {
         {activities.slice(0, displayCount).map((activity) => (
           <div key={activity.id} className="flex items-start gap-4 rounded-lg border p-4">
             <Avatar className="h-10 w-10">
-              <AvatarFallback>{activity.user.initials}</AvatarFallback>
+              <AvatarFallback>
+                {activity.username ? activity.username.substring(0, 2).toUpperCase() : 'NA'}
+              </AvatarFallback>
             </Avatar>
             <div className="flex-1 space-y-1">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium">{activity.user.name}</p>
-                <Badge
-                  variant={
-                    activity.status === "completed" || activity.status === "approved"
-                      ? "default"
-                      : activity.status === "pending"
-                        ? "outline"
-                        : "destructive"
-                  }
-                  className="text-xs"
-                >
-                  {activity.status}
-                </Badge>
+                <p className="text-sm font-medium">{activity.username || 'System'}</p>
+                {activity.status && (
+                  <Badge
+                    variant={
+                      activity.status === "completed" || activity.status === "approved"
+                        ? "default"
+                        : activity.status === "pending"
+                          ? "outline"
+                          : "destructive"
+                    }
+                    className="text-xs"
+                  >
+                    {activity.status}
+                  </Badge>
+                )}
               </div>
               <p className="text-sm text-muted-foreground">{activity.description}</p>
-              <p className="text-xs text-muted-foreground">{formatDate(activity.timestamp)}</p>
+              <p className="text-xs text-muted-foreground">{activity.timestamp}</p>
             </div>
           </div>
         ))}

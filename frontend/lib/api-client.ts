@@ -277,4 +277,80 @@ export const api = {
       return { success: false, message: "Reject loan failed" };
     }
   },
+  getTransactionTypeDistribution: async (): Promise<ApiResponse<any>> => {
+    "use server";
+    try {
+      const token = (await cookies()).get("token")?.value;
+      const response = await fetch(`${BASE_URL}/admin/transactions/distribution`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Get transaction distribution failed:", error);
+      return { success: false, message: "Get transaction distribution failed" };
+    }
+  },
+  getUserGrowthData: async (months: number = 6): Promise<ApiResponse<any>> => {
+    "use server";
+    try {
+      const token = (await cookies()).get("token")?.value;
+      const response = await fetch(`${BASE_URL}/admin/users/growth?months=${months}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Get user growth data failed:", error);
+      return { success: false, message: "Get user growth data failed" };
+    }
+  },
+  getLoanStatusDistribution: async (): Promise<ApiResponse<any>> => {
+    "use server";
+    try {
+      const token = (await cookies()).get("token")?.value;
+      const response = await fetch(`${BASE_URL}/admin/loans/distribution`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Get loan status distribution failed:", error);
+      return { success: false, message: "Get loan status distribution failed" };
+    }
+  },
+  getRecentSystemActivity: async (limit: number = 10): Promise<ApiResponse<any>> => {
+    "use server";
+    try {
+      const token = (await cookies()).get("token")?.value;
+      const response = await fetch(`${BASE_URL}/admin/activity?limit=${limit}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Get recent activity failed:", error);
+      return { success: false, message: "Get recent activity failed" };
+    }
+  },
 }

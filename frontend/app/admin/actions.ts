@@ -11,6 +11,32 @@ interface ChartDataPoint {
   volume: number;
 }
 
+interface TransactionType {
+  name: string;
+  value: number;
+}
+
+interface UserGrowthData {
+  date: string;
+  users: number;
+}
+
+interface LoanStatusData {
+  status: string;
+  count: number;
+}
+
+interface Activity {
+  id: string;
+  type: string;
+  description: string;
+  amount?: number;
+  status?: string;
+  timestamp: string;
+  userId?: string;
+  username?: string;
+}
+
 interface AdminDashboardStats {
   totalUsers: number;
   activeUsers: number;
@@ -94,5 +120,107 @@ export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
       totalLoanAmount: 0,
       chartData: [],
     };
+  }
+}
+
+export async function getTransactionDistribution(): Promise<TransactionType[]> {
+  const session = await getSession();
+
+  if (!session || session.role !== "admin") {
+    redirect("/login");
+  }
+
+  try {
+    const response = await api.getTransactionTypeDistribution();
+    
+    if (response.success && response.data) {
+      return response.data.map((item: any) => ({
+        name: item.type,
+        value: item.count
+      }));
+    }
+    
+    return [];
+  } catch (error) {
+    console.error("Error fetching transaction distribution:", error);
+    return [];
+  }
+}
+
+export async function getUserGrowthData(months: number = 6): Promise<UserGrowthData[]> {
+  const session = await getSession();
+
+  if (!session || session.role !== "admin") {
+    redirect("/login");
+  }
+
+  try {
+    const response = await api.getUserGrowthData(months);
+    
+    if (response.success && response.data) {
+      return response.data.map((item: any) => ({
+        date: formatDate(new Date(item.date)),
+        users: item.count
+      }));
+    }
+    
+    return [];
+  } catch (error) {
+    console.error("Error fetching user growth data:", error);
+    return [];
+  }
+}
+
+export async function getLoanStatusDistribution(): Promise<LoanStatusData[]> {
+  const session = await getSession();
+
+  if (!session || session.role !== "admin") {
+    redirect("/login");
+  }
+
+  try {
+    const response = await api.getLoanStatusDistribution();
+    
+    if (response.success && response.data) {
+      return response.data.map((item: any) => ({
+        status: item.status,
+        count: item.count
+      }));
+    }
+    
+    return [];
+  } catch (error) {
+    console.error("Error fetching loan status distribution:", error);
+    return [];
+  }
+}
+
+export async function getRecentActivity(limit: number = 10): Promise<Activity[]> {
+  const session = await getSession();
+
+  if (!session || session.role !== "admin") {
+    redirect("/login");
+  }
+
+  try {
+    const response = await api.getRecentSystemActivity(limit);
+    
+    if (response.success && response.data) {
+      return response.data.map((item: any) => ({
+        id: item.id,
+        type: item.type,
+        description: item.description,
+        amount: item.amount,
+        status: item.status,
+        timestamp: formatDate(new Date(item.timestamp)),
+        userId: item.user_id,
+        username: item.username
+      }));
+    }
+    
+    return [];
+  } catch (error) {
+    console.error("Error fetching recent activity:", error);
+    return [];
   }
 }

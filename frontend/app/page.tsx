@@ -47,7 +47,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col overflow-hidden">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="fixed top-0 z-50 w-full transition-all duration-300 bg-background/70 backdrop-blur-sm">
         <div className="container flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
           <BankLogo />
 
@@ -85,7 +85,7 @@ export default function Home() {
             {/* Mobile Navigation */}
             <Sheet>
               <SheetTrigger asChild className="md:hidden">
-                <Button variant="outline" size="icon">
+                <Button variant="outline" size="icon" className="bg-transparent border-none hover:bg-background/30">
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle menu</span>
                 </Button>
@@ -143,7 +143,7 @@ export default function Home() {
       </header>
 
       <main className="flex-1">
-        <section className="relative w-full min-h-screen py-12 md:py-16 lg:py-20 xl:py-24 overflow-hidden">
+        <section className="relative w-full min-h-screen pt-24 pb-12 md:py-16 md:pt-28 lg:py-20 lg:pt-28 xl:py-24 xl:pt-32 overflow-hidden">
           <div className="absolute inset-0 -z-10">
             <FloatingShapes />
           </div>
@@ -241,7 +241,7 @@ export default function Home() {
           </motion.div>
         </section>
 
-        <section ref={featuresRef} id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
+        <section ref={featuresRef} id="features" className="w-full pt-24 py-12 md:py-24 md:pt-28 lg:py-32 lg:pt-32 bg-muted/40">
           <div className="container px-4 md:px-6 lg:px-8">
             <motion.div
               className="flex flex-col items-center justify-center space-y-4 text-center"
@@ -292,7 +292,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section ref={aboutRef} id="about" className="w-full py-12 md:py-24 lg:py-32">
+        <section ref={aboutRef} id="about" className="w-full pt-24 py-12 md:py-24 md:pt-28 lg:py-32 lg:pt-32">
           <div className="container px-4 md:px-6 lg:px-8">
             <motion.div
               className="grid gap-6 lg:grid-cols-2 lg:gap-12"
@@ -390,7 +390,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section ref={contactRef} id="contact" className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
+        <section ref={contactRef} id="contact" className="w-full pt-24 py-12 md:py-24 md:pt-28 lg:py-32 lg:pt-32 bg-muted/40">
           <div className="container px-4 md:px-6 lg:px-8">
             <motion.div
               className="flex flex-col items-center justify-center space-y-4 text-center"

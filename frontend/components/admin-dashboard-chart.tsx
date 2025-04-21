@@ -3,7 +3,7 @@
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { useEffect, useState } from "react"
-import { formatDate } from "@/lib/utils"
+import { formatDate, formatCurrency } from "@/lib/utils"
 
 interface ChartDataPoint {
   date: string
@@ -35,8 +35,8 @@ export function AdminDashboardChart({ chartData, isLoading = false }: AdminDashb
   // Use provided data or fallback to empty array if loading or no data
   const data = chartData || []
   
-  // For mobile, show less data points
-  const displayData = isMobile ? data.filter((_, i) => i % 2 === 0) : data
+  // For mobile, show less data points to reduce clutter
+  const displayData = isMobile ? data.filter((_, i) => i % 3 === 0) : data
 
   return (
     <ChartContainer
@@ -62,25 +62,38 @@ export function AdminDashboardChart({ chartData, isLoading = false }: AdminDashb
         </div>
       ) : (
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={displayData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+          <LineChart data={displayData} margin={{ top: 5, right: isMobile ? 5 : 10, left: isMobile ? -15 : 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: isMobile ? 10 : 12 }}
+              tick={{ fontSize: isMobile ? 9 : 12 }}
               tickFormatter={isMobile ? (value) => value.split(" ")[1] : undefined}
+              interval={isMobile ? 1 : 0}
             />
-            <YAxis yAxisId="left" />
-            <YAxis yAxisId="right" orientation="right" />
+            <YAxis 
+              yAxisId="left" 
+              width={isMobile ? 30 : 40}
+              tick={{ fontSize: isMobile ? 9 : 12 }}
+              tickFormatter={(value) => isMobile ? String(value) : value}
+            />
+            <YAxis 
+              yAxisId="right" 
+              orientation="right" 
+              width={isMobile ? 35 : 50}
+              tick={{ fontSize: isMobile ? 9 : 12 }}
+              tickFormatter={(value) => isMobile ? `$${value}` : `$${value}`}
+            />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Legend />
+            <Legend wrapperStyle={isMobile ? { fontSize: "10px" } : undefined} />
             <Line
               yAxisId="left"
               type="monotone"
               dataKey="transactions"
               stroke="var(--color-transactions)"
               name="Transactions"
-              strokeWidth={2}
+              strokeWidth={isMobile ? 1.5 : 2}
               dot={!isMobile}
+              activeDot={{ r: isMobile ? 4 : 6 }}
             />
             <Line
               yAxisId="right"
@@ -88,8 +101,9 @@ export function AdminDashboardChart({ chartData, isLoading = false }: AdminDashb
               dataKey="volume"
               stroke="var(--color-volume)"
               name="Volume ($)"
-              strokeWidth={2}
+              strokeWidth={isMobile ? 1.5 : 2}
               dot={!isMobile}
+              activeDot={{ r: isMobile ? 4 : 6 }}
             />
           </LineChart>
         </ResponsiveContainer>
