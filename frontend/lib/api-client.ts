@@ -239,6 +239,25 @@ export const api = {
       return { success: false, message: "Get admin transactions failed" };
     }
   },
+  getAdminLoans: async (): Promise<ApiResponse<Loan[]>> => {
+    "use server";
+    try {
+      const token = (await cookies()).get("token")?.value;
+      const response = await fetch(`${BASE_URL}/admin/loans`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Get admin loans failed:", error);
+      return { success: false, message: "Get admin loans failed" };
+    }
+  },
   approveLoan: async (loanId: string): Promise<ApiResponse<any>> => {
     "use server";
     try {

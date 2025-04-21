@@ -15,8 +15,8 @@ export default async function AdminLoansPage() {
     redirect("/dashboard")
   }
 
-  // Get all loans from our backend API
-  const response = await api.getLoans();
+  // Get all loans from our backend API using the admin endpoint
+  const response = await api.getAdminLoans();
   
   const loans = response.success && response.data ? response.data : [];
 
