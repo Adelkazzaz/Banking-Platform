@@ -39,7 +39,10 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <RecentTransactions transactions={transactions.slice(0, 5)} />
+        <RecentTransactions 
+          transactions={transactions.slice(0, 5)} 
+          userAccountNumber={user.accountNumber}
+        />
         <div className="space-y-6">
           <LoanStatus loans={loans} />
           <QuickActions />
