@@ -68,7 +68,23 @@ class LoanService:
         limit: int = 10, 
         offset: int = 0, 
         status: Optional[str] = None
-    ) -> Tuple[List[Loan], int]:
+    ) -> Tuple[List[dict], int]:
         loans = await self.loan_repository.get_all(limit, offset, status)
         total = await self.loan_repository.count(status)
-        return loans, total
+        
+        # Enhance loan data with user account information
+        enhanced_loans = []
+        for loan in loans:
+            loan_dict = loan.dict()
+            # Get user information for this loan
+            user = await self.user_repository.get_by_id(loan.userId)
+            if user:
+                loan_dict["accountNumber"] = user.accountNumber
+                loan_dict["userName"] = f"{user.firstName} {user.lastName}"
+            else:
+                loan_dict["accountNumber"] = "Unknown"
+                loan_dict["userName"] = "Unknown User"
+            
+            enhanced_loans.append(loan_dict)
+            
+        return enhanced_loans, total
