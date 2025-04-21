@@ -1,12 +1,12 @@
 # API settings
-PORT=8000
+PORT=
 
 # Security settings
-JWT_SECRET=your_super_secret_key_change_in_production
+JWT_SECRET=
 
 # Database settings
-MONGODB_URI=mongodb://localhost:27017
-DATABASE_NAME=floosy_db
+MONGODB_URI=
+DATABASE_NAME=
 
 # CORS settings
-FRONTEND_URL=http://localhost:3000
+FRONTEND_URL=
