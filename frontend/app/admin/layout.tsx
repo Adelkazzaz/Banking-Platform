@@ -5,6 +5,15 @@ import { AdminNav } from "@/components/admin-nav"
 import { UserNav } from "@/components/user-nav"
 import { BankLogo } from "@/components/bank-logo"
 import { ModeToggle } from "@/components/mode-toggle"
+import { Viewport } from "next"
+
+// Move themeColor from metadata to viewport export
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" }
+  ],
+}
 
 export default async function AdminLayout({
   children,

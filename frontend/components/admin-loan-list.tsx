@@ -176,7 +176,7 @@ export function AdminLoanList({ loans }: AdminLoanListProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>User ID</TableHead>
+                  <TableHead>Account Number</TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead>Term</TableHead>
                   <TableHead>Interest Rate</TableHead>
@@ -187,11 +187,16 @@ export function AdminLoanList({ loans }: AdminLoanListProps) {
               </TableHeader>
               <TableBody>
                 {sortedLoans.map((loan) => (
-                  <TableRow key={loan.id} className={loan.status === "pending" ? "bg-yellow-50" : ""}>
+                  <TableRow 
+                    key={loan.id} 
+                    className={loan.status === "pending" 
+                      ? "bg-yellow-50 dark:bg-yellow-950/30" 
+                      : ""}
+                  >
                     <TableCell className="font-mono text-xs">
                       <div className="flex items-center">
                         <User className="h-4 w-4 mr-1 text-muted-foreground" />
-                        {loan.userId}
+                        {loan.accountNumber}
                       </div>
                     </TableCell>
                     <TableCell className="font-medium">{formatCurrency(loan.amount)}</TableCell>
@@ -243,7 +248,8 @@ export function AdminLoanList({ loans }: AdminLoanListProps) {
                       {loan.status !== "pending" && (
                         <span className="text-sm text-muted-foreground">
                           {loan.status === "approved" ? "Approved on " : "Rejected on "}
-                          {loan.approvalDate ? formatDate(loan.approvalDate) : "N/A"}
+                          {loan.approvalDate ? formatDate(loan.approvalDate) : 
+                           loan.status === "rejected" && loan.rejectionDate ? formatDate(loan.rejectionDate) : "N/A"}
                         </span>
                       )}
                     </TableCell>
@@ -279,7 +285,7 @@ export function AdminLoanList({ loans }: AdminLoanListProps) {
                 <p><span className="font-medium">Term:</span> {selectedLoan.term} months</p>
                 <p><span className="font-medium">Interest Rate:</span> {selectedLoan.interestRate.toFixed(2)}%</p>
                 <p><span className="font-medium">Request Date:</span> {formatDate(selectedLoan.requestDate)}</p>
-                <p><span className="font-medium">User ID:</span> {selectedLoan.userId}</p>
+                <p><span className="font-medium">Account Number:</span> {selectedLoan.accountNumber}</p>
               </div>
             </div>
           )}
