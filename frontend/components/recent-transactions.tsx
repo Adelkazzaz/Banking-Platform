@@ -31,10 +31,14 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
                 </div>
                 <div
                   className={`font-medium ${
-                    transaction.type === "deposit" || transaction.toAccount ? "text-green-500" : "text-red-500"
+                    transaction.type === "withdrawal" || 
+                    (transaction.type === "transfer" && transaction.accountNumber === transaction.fromAccount) 
+                      ? "text-red-500" : "text-green-500"
                   }`}
                 >
-                  {transaction.type === "deposit" || transaction.toAccount ? "+" : "-"}
+                  {transaction.type === "withdrawal" || 
+                   (transaction.type === "transfer" && transaction.accountNumber === transaction.fromAccount)
+                    ? "-" : "+"}
                   {formatCurrency(transaction.amount)}
                 </div>
               </div>
