@@ -24,7 +24,7 @@ Floosy is a modern banking application built with Next.js and Python. This proje
 
 - Frontend: Next.js, Tailwind CSS, TypeScript
 - Backend: Python, FastAPI
-- Database: (To be specified)
+- Database: MongoBD
 
 ## Getting Started
 
