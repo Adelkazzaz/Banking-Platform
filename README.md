@@ -44,7 +44,7 @@ Floosy is a modern banking application built with Next.js and Python. This proje
 
 1.  Navigate to the `backend` directory: `cd backend`
 2.  Install dependencies: `pip install -r requirements.txt`
-3.  Run the application: `python main.py`
+3.  Run the application: `python main.py` or `uvicorn main:app --reload`
 4.  The backend server will start running on `http://localhost:8000`
 
 ## Contributing
