@@ -39,15 +39,22 @@ export function TransactionVolumeChart({ transactions }: TransactionVolumeChartP
 
   useEffect(() => {
     // Group transactions by day
-    const groupedByDay: Record<string, { date: string; transfers: number; deposits: number; withdrawals: number }> = {}
+    const groupedByDay: Record<string, { 
+      originalDate: string; // Add original date string for sorting
+      displayDate: string; 
+      transfers: number; 
+      deposits: number; 
+      withdrawals: number 
+    }> = {}
 
     transactions.forEach((transaction) => {
       const date = new Date(transaction.timestamp)
-      const dateStr = date.toISOString().split("T")[0]
+      const dateStr = date.toISOString().split("T")[0] // YYYY-MM-DD
 
       if (!groupedByDay[dateStr]) {
         groupedByDay[dateStr] = {
-          date: new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          originalDate: dateStr, // Store the YYYY-MM-DD date
+          displayDate: new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" }), // Keep formatted date for display
           transfers: 0,
           deposits: 0,
           withdrawals: 0,
@@ -66,9 +73,12 @@ export function TransactionVolumeChart({ transactions }: TransactionVolumeChartP
     // Convert to array for chart
     const data = Object.values(groupedByDay)
 
-    // Sort by date
+    // Sort by the original date string
     data.sort((a, b) => {
-      return new Date(a.date).getTime() - new Date(b.date).getTime()
+      // Compare YYYY-MM-DD strings directly
+      if (a.originalDate < b.originalDate) return -1;
+      if (a.originalDate > b.originalDate) return 1;
+      return 0;
     })
 
     // Limit to last 14 days for better visualization
@@ -96,13 +106,15 @@ export function TransactionVolumeChart({ transactions }: TransactionVolumeChartP
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" tick={{ fontSize: isMobile ? 10 : 12 }} />
+          {/* Use displayDate for the XAxis */}
+          <XAxis dataKey="displayDate" tick={{ fontSize: isMobile ? 10 : 12 }} /> 
           <YAxis
             tickFormatter={(value) => `$${value}`}
             width={isMobile ? 40 : 60}
             tick={{ fontSize: isMobile ? 10 : 12 }}
           />
-          <Tooltip content={<ChartTooltipContent />} formatter={(value) => formatCurrency(value as number)} />
+          {/* Tooltip content likely uses the dataKey from XAxis, ensure it displays correctly */}
+          <Tooltip content={<ChartTooltipContent indicator="dot" />} formatter={(value) => formatCurrency(value as number)} />
           <Legend />
           <Area
             type="monotone"

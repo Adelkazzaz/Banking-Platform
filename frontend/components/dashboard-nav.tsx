@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, ArrowLeftRight, Clock, CreditCard, Settings, LogOut } from "lucide-react"
+import { LayoutDashboard, ArrowLeftRight, Clock, CreditCard, Settings, LogOut, ArrowDownToLine, ArrowUpFromLine } from "lucide-react"
 import { logoutAction } from "@/app/login/actions"
 
 export function DashboardNav() {
@@ -20,6 +20,16 @@ export function DashboardNav() {
       title: "Transfer Money",
       href: "/dashboard/transfer",
       icon: ArrowLeftRight,
+    },
+    {
+      title: "Deposit Funds",
+      href: "/dashboard/deposit",
+      icon: ArrowDownToLine, // Added Deposit Icon
+    },
+    {
+      title: "Withdraw Funds",
+      href: "/dashboard/withdrawal",
+      icon: ArrowUpFromLine, // Added Withdrawal Icon
     },
     {
       title: "Transaction History",

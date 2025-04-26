@@ -92,7 +92,9 @@ export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
     
     if (chartResponse.success && chartResponse.data) {
       chartData = chartResponse.data.map((item: any) => ({
-        date: formatDate(new Date(item.date)),
+        // Pass the original date string from the API
+        // The chart component will handle formatting for display
+        date: item.date, 
         transactions: item.count || 0,
         volume: item.volume || 0
       }));

@@ -36,6 +36,7 @@ export default function AdminDashboardPage() {
     async function loadStats() {
       try {
         const data = await getAdminDashboardStats()
+        console.log("Admin Stats Data:", data); // <-- Add console log here
         setStats(data)
       } catch (error) {
         console.error("Failed to load admin stats:", error)

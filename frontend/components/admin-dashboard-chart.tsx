@@ -35,8 +35,15 @@ export function AdminDashboardChart({ chartData, isLoading = false }: AdminDashb
   // Use provided data or fallback to empty array if loading or no data
   const data = chartData || []
   
+  // Prepare data with formatted date for display
+  const displayData = data.map(item => ({
+    ...item,
+    // Format date as 'Mon Day' (e.g., 'Apr 26')
+    displayDate: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }));
+
   // For mobile, show less data points to reduce clutter
-  const displayData = isMobile ? data.filter((_, i) => i % 3 === 0) : data
+  // const displayData = isMobile ? data.filter((_, i) => i % 3 === 0) : data // Keep original data density for now
 
   return (
     <ChartContainer
@@ -62,13 +69,16 @@ export function AdminDashboardChart({ chartData, isLoading = false }: AdminDashb
         </div>
       ) : (
         <ResponsiveContainer width="100%" height="100%">
+          {/* Use the mapped displayData */}
           <LineChart data={displayData} margin={{ top: 5, right: isMobile ? 5 : 10, left: isMobile ? -15 : 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
-              dataKey="date"
-              tick={{ fontSize: isMobile ? 9 : 12 }}
-              tickFormatter={isMobile ? (value) => value.split(" ")[1] : undefined}
-              interval={isMobile ? 1 : 0}
+              dataKey="displayDate" // Use the formatted displayDate
+              tick={{ fontSize: isMobile ? 9 : 11 }} // Slightly smaller font for non-mobile too
+              // tickFormatter removed as displayDate is pre-formatted
+              interval="preserveStartEnd" // Helps prevent label collision
+              // angle={isMobile ? 0 : -30} // Optional: Rotate labels if still overlapping
+              // textAnchor={isMobile ? "middle" : "end"} // Optional: Adjust anchor if rotating
             />
             <YAxis 
               yAxisId="left" 
@@ -83,7 +93,16 @@ export function AdminDashboardChart({ chartData, isLoading = false }: AdminDashb
               tick={{ fontSize: isMobile ? 9 : 12 }}
               tickFormatter={(value) => isMobile ? `$${value}` : `$${value}`}
             />
-            <ChartTooltip content={<ChartTooltipContent />} />
+            {/* Ensure Tooltip uses the original date or formats displayDate correctly */}
+            <ChartTooltip 
+              content={<ChartTooltipContent 
+                labelFormatter={(label, payload) => {
+                  // Find the original data point to show the full date in tooltip
+                  const originalPoint = data.find(p => new Date(p.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) === label);
+                  return originalPoint ? new Date(originalPoint.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : label;
+                }}
+              />}
+            />
             <Legend wrapperStyle={isMobile ? { fontSize: "10px" } : undefined} />
             <Line
               yAxisId="left"
