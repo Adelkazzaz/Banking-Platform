@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Optional
 
 from app.models.user import UserInDB, User
-from app.models.transaction import TransactionsResponse
+from app.models.transaction import Transaction, TransactionsResponse # Added Transaction
 from app.models.loan import LoanResponse, LoansResponse
 from app.services.user_service import UserService
 from app.services.transaction_service import TransactionService
@@ -35,14 +35,17 @@ async def get_all_users(
         ) for user in users
     ]
     
+    # Return the structure expected by the frontend
     return {
-        "users": user_list,
+        "success": True,
+        "message": "Users fetched successfully",
+        "data": user_list,
         "total": total,
         "limit": limit,
         "offset": offset
     }
 
-@router.get("/transactions", response_model=TransactionsResponse)
+@router.get("/transactions", response_model=dict) # Changed response_model
 async def get_all_transactions(
     limit: int = 10,
     offset: int = 0,
@@ -52,12 +55,14 @@ async def get_all_transactions(
 ):
     transactions, total = await transaction_service.get_all_transactions(limit, offset, type)
     
-    return TransactionsResponse(
-        transactions=transactions,
-        total=total,
-        limit=limit,
-        offset=offset
-    )
+    # Return in the format expected by the frontend action
+    return {
+        "success": True,
+        "data": transactions,
+        "total": total, # Optionally include total for pagination if needed later
+        "limit": limit,
+        "offset": offset
+    }
 
 @router.get("/transactions/chart")
 async def get_transaction_chart_data(
@@ -139,20 +144,19 @@ async def get_recent_activity(
 
 @router.get("/loans", response_model=dict)
 async def get_all_loans(
-    limit: int = 10,
+    limit: Optional[int] = None, # Changed default limit from 10 to None
     offset: int = 0,
     status: Optional[str] = None,
     current_user: UserInDB = Depends(get_current_admin),
     loan_service: LoanService = Depends(get_loan_service)
 ):
-    loans, total = await loan_service.get_all_loans(limit, offset, status)
-    
+    loans, total = await loan_service.get_all_loans(limit=limit, offset=offset, status=status)
     return {
         "success": True,
-        "data": loans,
-        "total": total,
-        "limit": limit,
-        "offset": offset
+        "data": {
+            "loans": loans,
+            "total": total
+        }
     }
 
 @router.put("/loans/{loan_id}/approve", response_model=LoanResponse)

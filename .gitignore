@@ -33,3 +33,5 @@ backend/.venv/
 backend/*.pyc
 backend/.env
 backend/instance/
+backend/app/api/__pycache__/*
+backend/app/api/routes/__pycache__/*

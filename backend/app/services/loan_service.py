@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Optional, List, Tuple
 from datetime import datetime
 from app.models.loan import Loan, LoanCreate
 from app.repositories.loan_repository import LoanRepository
@@ -64,14 +64,14 @@ class LoanService:
         return True, "Loan rejected successfully", updated_loan
 
     async def get_all_loans(
-        self, 
-        limit: int = 10, 
-        offset: int = 0, 
+        self,
+        limit: Optional[int] = None,
+        offset: int = 0,
         status: Optional[str] = None
     ) -> Tuple[List[dict], int]:
         loans = await self.loan_repository.get_all(limit, offset, status)
         total = await self.loan_repository.count(status)
-        
+
         # Enhance loan data with user account information
         enhanced_loans = []
         for loan in loans:

@@ -44,12 +44,17 @@ class LoanRepository:
         
         return await self.get_by_id(loan_id)
 
-    async def get_all(self, limit: int = 10, offset: int = 0, status: Optional[str] = None) -> List[Loan]:
+    async def get_all(self, limit: Optional[int] = None, offset: int = 0, status: Optional[str] = None) -> List[Loan]: # Accept Optional[int] for limit
         query = {}
         if status:
             query["status"] = status
-            
-        loans = await self.collection.find(query).skip(offset).limit(limit).to_list(length=limit)
+
+        cursor = self.collection.find(query).skip(offset)
+        if limit is not None:
+            cursor = cursor.limit(limit)
+
+        # Use None for length in to_list to get all matching documents if no limit is set
+        loans = await cursor.to_list(length=limit)
         return [Loan(**loan) for loan in loans]
 
     async def count(self, status: Optional[str] = None) -> int:
